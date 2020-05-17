@@ -1,6 +1,13 @@
+/// Author: Marcio deFreitasNascimento
+/// Title: Easylist - App Mock Up
+/// Date: 05/17/2020
+
 import 'package:easylist/UI/list_detail_screen.dart';
 import 'package:flutter/material.dart';
 
+/// ListScreen Class
+///
+/// UI that allows to manage the avaiables lists
 class ListScreen extends StatelessWidget {
   const ListScreen({Key key}) : super(key: key);
 
@@ -35,7 +42,8 @@ class ListScreen extends StatelessWidget {
     );
   }
 
-  /// Dialogs
+  /// Provides a dialog for adding of a new list
+  /// 
   Future<void> _addListScreen(BuildContext context) async {
     await showDialog(
         context: context,

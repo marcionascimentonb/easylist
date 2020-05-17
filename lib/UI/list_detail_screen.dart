@@ -1,8 +1,15 @@
+/// Author: Marcio deFreitasNascimento
+/// Title: Easylist - App Mock Up
+/// Date: 05/17/2020
+
 import 'package:easylist/UI/picture_screen.dart';
 import 'package:easylist/main.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 
+/// ListDetailScree class
+/// 
+/// UI displays the items of a specific ListScreen
 class ListDetailScreen extends StatefulWidget {
 
   final String imagePath;
@@ -60,8 +67,9 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
     );
   }
 
+  /// Displays the items of the List
+  /// 
   Widget _allItems(BuildContext context) {    
-
     return ListView.separated(
       /// [TODO]: load dynamically
       /// https://flutter.dev/docs/cookbook/lists/basic-list
@@ -87,6 +95,8 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
     );
   }
 
+  /// Shows the system messages through a SnackBar
+  /// 
   void _showMessageInScaffold(String message) {
     _scaffoldKey.currentState.showSnackBar(
       SnackBar(
@@ -95,6 +105,7 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
     );
   }
 
+  /// Toggles an item between [Pending] and [Done] item status
   void _toggleItem(Color color,index) {
     if (color == Colors.green) {
       _checkColors[index] = Colors.red;
@@ -105,7 +116,8 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
     }
   }
 
-  ///Dialog
+  /// Provides a dialog for adding of a new item
+  /// 
   Future<void> _addListItemScreen(BuildContext context) async {
     await showDialog(
         context: context,

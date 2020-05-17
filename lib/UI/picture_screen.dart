@@ -1,3 +1,8 @@
+/// Author: https://flutter.dev/docs/cookbook/plugins/picture-using-camera#complete-example
+/// Modifications by: Marcio de Freitas Nascimento
+/// Title: Easylist - App Mock Up
+/// Date: 05/17/2020
+
 import 'dart:async';
 import 'dart:io';
 
@@ -6,28 +11,6 @@ import 'package:easylist/UI/list_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' show join;
 import 'package:path_provider/path_provider.dart';
-
-Future<void> main() async {
-  // Ensure that plugin services are initialized so that `availableCameras()`
-  // can be called before `runApp()`
-  WidgetsFlutterBinding.ensureInitialized();
-
-  // Obtain a list of the available cameras on the device.
-  final cameras = await availableCameras();
-
-  // Get a specific camera from the list of available cameras.
-  final firstCamera = cameras.first;
-
-  runApp(
-    MaterialApp(
-      theme: ThemeData.dark(),
-      home: TakePictureScreen(
-        // Pass the appropriate camera to the TakePictureScreen widget.
-        camera: firstCamera,
-      ),
-    ),
-  );
-}
 
 // A screen that allows users to take a picture using a given camera.
 class TakePictureScreen extends StatefulWidget {
@@ -142,8 +125,14 @@ class DisplayPictureScreen extends StatelessWidget {
       body: Image.file(File(imagePath)),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.save_alt),
-        onPressed: ()  => Navigator.of(context)
-                .push(MaterialPageRoute(builder: (_) => ListDetailScreen(imagePath:imagePath)))),
-        );          
+        onPressed: () => Navigator.of(context).push(
+          MaterialPageRoute(
+            /// Going back to the List Items
+            /// [TODO]: need to perform dynamically
+            builder: (_) => ListDetailScreen(imagePath: imagePath),
+          ),
+        ),
+      ),
+    );
   }
 }
