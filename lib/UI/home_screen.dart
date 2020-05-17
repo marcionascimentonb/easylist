@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'easylist_screen.dart';
+import 'list_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key key, this.title}) : super(key: key);
@@ -15,6 +15,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return EasyListScreen();
+    return ListScreen();
   }
 }
