@@ -4,30 +4,39 @@
 
 import 'dart:async';
 import 'package:easylist/DataLayer/elist.dart';
+import 'package:rxdart/rxdart.dart';
 import 'blocbase.dart';
 
 /// ElistBloc class
 ///
 /// [TODO] immplents filter lists by criteria
 class EListBloc extends BlocBase {
-  final _eList = EList();
+  final _eL = EList();
 
-  final _eListsController = StreamController<List<EList>>();
+  final _eLsController = BehaviorSubject<List<EList>>();
+  Stream<List<EList>> get allELists => _eLsController.stream;
+  
 
-  Stream<List<EList>> get stream => _eListsController.stream;
+  final _eListController = StreamController<EList>();
+  Sink<EList> get eListSave => _eListController.sink; 
 
-  EListBloc() {
-    //_elistsController.stream.listen(_handle);
+
+
+  EListBloc() {    
+    _getAllELists();
+    _eListController.stream.listen(_handle);
   }
 
-  // void _handle(List<EList> event) {
-  //   _elistsController.sink.add()
-  // }
+  void _handle(EList eList) {
+    eList.save();
+    //move saved list into the allElists sink
+    _getAllELists();
+  }
 
   /// My sink is exposed by this method
-  void getAllELists() async {
-    final results = await _eList.getAllELists();
-    _eListsController.sink.add(results);
+  void _getAllELists() async {
+    final results = await _eL.getAllELists();
+    _eLsController.sink.add(results); 
   }
 
   @override

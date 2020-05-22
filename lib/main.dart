@@ -4,6 +4,8 @@
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'BLoC/elist_bloc.dart';
+import 'UI/easylistapp_provider.dart';
 import 'UI/home_screen.dart';
 
 /// Runs the app async to load the camera in another thread 
@@ -13,26 +15,6 @@ Future<void> main() async {
   runApp(EasyListApp(camera: firstCamera));
 }
 
-/// The InheritedCamera class
-/// 
-/// Allows to call the camera down into the widgets tree
-class InheritedCamera extends InheritedWidget {
-  final camera;
-
-  InheritedCamera({this.camera, Key key, this.child})
-      : super(key: key, child: child);
-
-  final Widget child;
-
-  static InheritedCamera of(BuildContext context) {
-    return (context.dependOnInheritedWidgetOfExactType() as InheritedCamera);
-  }
-
-  @override
-  bool updateShouldNotify(InheritedCamera oldWidget) {
-    return true;
-  }
-}
 
 /// EasyLisApp application class
 class EasyListApp extends StatelessWidget {
@@ -42,7 +24,8 @@ class EasyListApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InheritedCamera(
+    return EasyListAppProvider(
+      eListBloc: EListBloc(),
       camera: camera,
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

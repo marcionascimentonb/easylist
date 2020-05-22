@@ -14,7 +14,7 @@ import 'elistitem.dart';
 
 /// A helper for database persistence
 class DatabaseHelper {
-  static final _databaseName = 'dbDemo.db';
+  static final _databaseName = 'dbEasyList.db';
   static final _databaseVersion = 1;
 
   /// Makes this a singleton class

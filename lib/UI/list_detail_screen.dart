@@ -1,12 +1,13 @@
+import 'package:camera/camera.dart';
 /// Author: Marcio deFreitasNascimento
 /// Title: Easylist - App Mock Up
 /// Date: 05/17/2020
 
 import 'package:easylist/UI/picture_screen.dart';
-import 'package:easylist/main.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 
+import 'easylistapp_provider.dart';
 import 'list_screen.dart';
 
 /// ListDetailScree class
@@ -39,8 +40,8 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final InheritedCamera inheritedCamera =
-        context.inheritFromWidgetOfExactType(InheritedCamera);
+    final CameraDescription camera = EasyListAppProvider.of(context).camera;
+        
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -70,7 +71,7 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
             child: Icon(Icons.add_a_photo),
             onPressed: () => Navigator.of(context).push(MaterialPageRoute(
                 builder: (_) =>
-                    TakePictureScreen(camera: inheritedCamera.camera))),
+                    TakePictureScreen(camera: camera))),
           ),
         ],
       ),

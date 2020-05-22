@@ -1,5 +1,8 @@
+import 'package:easylist/DataLayer/elist.dart';
+import 'package:easylist/UI/easylistapp_provider.dart';
+
 /// Author: Marcio deFreitasNascimento
-/// Title: Easylist - App Mock Up
+/// Title: Easylist
 /// Date: 05/17/2020
 
 import 'package:easylist/UI/list_detail_screen.dart';
@@ -33,48 +36,63 @@ class ListScreen extends StatelessWidget {
 
   /// Returns all avaiable lists
   Widget _allLists(BuildContext context) {
-    return ListView.separated(
-      /// [TODO]: load dynamically
-      /// https://flutter.dev/docs/cookbook/lists/basic-list
-      itemCount: 4,
-      separatorBuilder: (context, index) => Divider(),
-      itemBuilder: (context, index) {
-        return ListTile(
-          leading: Icon(Icons.list),
-          title: Text('List ${index + 1}'),
-          onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                          builder: (_) => ListDetailScreen(title: 'List ${index + 1}'))),
-        );
-      },
-    );
+    final eListBloc = EasyListAppProvider.of(context).eListBloc;
+    return StreamBuilder<List<EList>>(
+        stream: eListBloc.allELists,
+        initialData: List<EList>(),
+        builder: (context, snapshot) {
+          return ListView.separated(
+            /// [TODO]: load dynamically
+            /// https://flutter.dev/docs/cookbook/lists/basic-list
+            itemCount: snapshot.data.length,
+            separatorBuilder: (context, index) => Divider(),
+            itemBuilder: (context, index) {
+              return ListTile(
+                leading: Icon(Icons.list),
+                title: Text('${snapshot.data[index].name}'),
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                    builder: (_) => ListDetailScreen(
+                        title: '${snapshot.data[index].name}'))),
+              );
+            },
+          );
+        });
   }
 
   /// Provides a dialog for adding of a new list
-  /// 
+  ///
   Future<void> _addListScreen(BuildContext context) async {
-    await showDialog(
+    await showDialog(      
         context: context,
-        builder: (BuildContext context) {
+        builder: (BuildContext context) {          
+          final eListBloc = EasyListAppProvider.of(context).eListBloc;
+          TextEditingController nameController = TextEditingController();
           return SimpleDialog(
             contentPadding: EdgeInsets.all(0.0),
             children: <Widget>[
               SimpleDialogOption(
                 padding: EdgeInsets.all(0.0),
-                child: Row(                  
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,                  
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    IconButton(                      
+                    IconButton(
                       icon: Icon(
                         Icons.close,
                       ),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
-                    IconButton(                      
-                      icon: 
-                       Icon(Icons.arrow_forward),
-                       tooltip: 'List Items', 
-                      onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-                          builder: (_) => ListDetailScreen(title: "List Name"))),
+                    IconButton(
+                      icon: Icon(Icons.arrow_forward),
+                      tooltip: 'List Items',
+                      onPressed: () => eListBloc.eListSave.add(EList(name:nameController.text))
+                      // Navigator.of(context).push(
+                      //   MaterialPageRoute(
+                      //     builder: (_) {
+                            
+                      //       ///[TODO]:ListDetailScreen(title: "List Name");
+                      //       },
+                      //   ),
+                      // ),
                     ),
                   ],
                 ),
@@ -85,6 +103,7 @@ class ListScreen extends StatelessWidget {
               ),
               SimpleDialogOption(
                 child: TextField(
+                  controller: nameController,
                   decoration: InputDecoration(
                     border: UnderlineInputBorder(),
                     labelText: 'List Name',
