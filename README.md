@@ -1,4 +1,5 @@
-# EASYLIST – Simple Shopping List App
+# EASYLIST [DEV] – Simple Shopping List App
+
 EasyList will be a mobile application that allows the user to make shopping lists:
 - Create shopping list
 - Insert/Delete/Update list items

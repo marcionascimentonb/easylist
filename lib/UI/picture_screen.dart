@@ -104,6 +104,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
             // If an error occurs, log the error to the console.
             print(e);
           }
+
         },
       ),
     );
@@ -124,7 +125,8 @@ class DisplayPictureScreen extends StatelessWidget {
       // constructor with the given path to display the image.
       body: Image.file(File(imagePath)),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.save_alt),
+        child: Icon(Icons.save_alt, ),
+        tooltip: 'Save Item Picture',
         onPressed: () => Navigator.of(context).push(
           MaterialPageRoute(
             /// Going back to the List Items

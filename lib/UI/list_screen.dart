@@ -15,6 +15,11 @@ class ListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Image.asset('images/easylist_icon.png'),
+          onPressed: () => Navigator.of(context)
+              .push(MaterialPageRoute(builder: (_) => ListScreen())),
+        ),
         title: Text("EasyList - All lists"),
       ),
       body: _allLists(context),
@@ -37,6 +42,8 @@ class ListScreen extends StatelessWidget {
         return ListTile(
           leading: Icon(Icons.list),
           title: Text('List ${index + 1}'),
+          onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                          builder: (_) => ListDetailScreen(title: 'List ${index + 1}'))),
         );
       },
     );
@@ -53,16 +60,23 @@ class ListScreen extends StatelessWidget {
             children: <Widget>[
               SimpleDialogOption(
                 padding: EdgeInsets.all(0.0),
-                child: IconButton(
-                  icon: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      Text("Items"),
-                      Icon(Icons.arrow_right),
-                    ],
-                  ),
-                  onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-                      builder: (_) => ListDetailScreen(title: "List Name"))),
+                child: Row(                  
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,                  
+                  children: <Widget>[
+                    IconButton(                      
+                      icon: Icon(
+                        Icons.close,
+                      ),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                    IconButton(                      
+                      icon: 
+                       Icon(Icons.arrow_forward),
+                       tooltip: 'List Items', 
+                      onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+                          builder: (_) => ListDetailScreen(title: "List Name"))),
+                    ),
+                  ],
                 ),
               ),
               SimpleDialogOption(
