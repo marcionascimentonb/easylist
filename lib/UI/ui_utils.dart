@@ -2,8 +2,8 @@
 
 /// Shows the system messages through a SnackBar
   ///
-  void showMessageInScaffold(BuildContext context, String message) {
-    Scaffold.of(context).showSnackBar(
+  void showMessageInScaffold(GlobalKey<ScaffoldState> scaffoldKey, String message) {
+    scaffoldKey.currentState.showSnackBar(
       SnackBar(
         content: Text(message),
       ),

@@ -16,11 +16,6 @@ class EListItem extends DBPersistence {
 
   EList eList;
 
-  ///[TODO]: change to Enum
-  static const STATUS_PENDING = 1;
-  static const STATUS_DONE = 2;
-  
-
   /// Table DDL
   static final table = "EListItem";
   static final elistTable = "EList";
@@ -40,6 +35,7 @@ class EListItem extends DBPersistence {
       $colImagePath Text,
       $colEListId Integer,
       CONSTRAINT "lnk_EList_EListItem" FOREIGN KEY ( $colEListId ) REFERENCES $elistTable( $colId )
+      ON DELETE CASCADE
     ); ''';
 
   EListItem(
@@ -48,14 +44,15 @@ class EListItem extends DBPersistence {
       this.name,
       this.description,
       this.imagePath,
-      this.status=STATUS_PENDING});
+      ///TODO: change status value to Enum
+      this.status=1});
 
   /// Set arguments for a constructor's calling
   ///
   /// It helps to generate objects from the database row maps
   EListItem.fromMap(Map<String, dynamic> map)
       : id = map[colId],
-        eList = EList(id:map[colId]),
+        eList = EList(id:map[colEListId]),
         name = map[colName],
         description = map[colDescription],
         imagePath = map[colImagePath],
@@ -95,4 +92,10 @@ class EListItem extends DBPersistence {
     return await DatabaseHelper.instance.delete(this);
   }
 
+}
+
+/// TODO: ElistItemStatus: change to Enum
+class ElistItemStatus{
+  final STATUS_PENDING=1;
+  final STATUS_DONE=2;
 }

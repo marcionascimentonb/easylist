@@ -15,9 +15,12 @@ import 'package:flutter/material.dart';
 class ListScreen extends StatelessWidget {
   const ListScreen({Key key}) : super(key: key);
 
+
   @override
   Widget build(BuildContext context) {
+    final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         leading: IconButton(
           icon: Image.asset('images/easylist_icon.png'),
@@ -26,7 +29,7 @@ class ListScreen extends StatelessWidget {
         ),
         title: Text("EasyList - All lists"),
       ),
-      body: _allLists(context),
+      body: _allLists(context,_scaffoldKey),
       floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
           onPressed: () {
@@ -36,7 +39,7 @@ class ListScreen extends StatelessWidget {
   }
 
   /// Returns all avaiable lists
-  Widget _allLists(BuildContext context) {
+  Widget _allLists(BuildContext context, GlobalKey<ScaffoldState> scaffoldkey) {
     final eListBloc = EasyListAppProvider.of(context).eListBloc;
     return StreamBuilder<List<EList>>(
         stream: eListBloc.allELists,
@@ -55,7 +58,7 @@ class ListScreen extends StatelessWidget {
                   eListBloc.eListSink.add(snapshot.data[index]
                       .setOperation(snapshot.data[index].OPERATION_DELETE));
                   showMessageInScaffold(
-                      context, "{${snapshot.data[index].name}");
+                     scaffoldkey, "{${snapshot.data[index].name}");
                 },
                 background: Container(
                   color: Colors.red,

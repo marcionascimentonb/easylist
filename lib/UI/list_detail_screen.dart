@@ -27,8 +27,8 @@ class ListDetailScreen extends StatefulWidget {
   final String title;
 
   @override
-  _ListDetailScreenState createState() =>
-      _ListDetailScreenState(title: title, imagePath: imagePath, eListParent: eListParent);
+  _ListDetailScreenState createState() => _ListDetailScreenState(
+      title: title, imagePath: imagePath, eListParent: eListParent);
 }
 
 class _ListDetailScreenState extends State<ListDetailScreen> {
@@ -40,11 +40,9 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
   String imagePath;
   EList eListParent;
 
-  Color _checkColor = Colors.red;
-  List<MaterialColor> _checkColors = List<MaterialColor>();
-
-  /// A unique key across the entire app
+  /// A unique key
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final  ElistItemStatus _eListItemStatus = ElistItemStatus();
 
   @override
   Widget build(BuildContext context) {
@@ -90,19 +88,21 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
   Widget _allItems(BuildContext context) {
     final eListBloc = EasyListAppProvider.of(context).eListBloc;
 
+    /// force stream refresh
+    eListBloc.eListItemSink.add(EListItem(eList: eListParent));    
+
     /// Toggles an item according to item status
-    void _toggleItem(Color color, int index, EListItem item) {
-      if (color == Colors.green) {
-        item.status = EListItem.STATUS_PENDING;
-        _checkColors[index] = Colors.red;
-        showMessageInScaffold(context, "Item pending.");
+    void _toggleStatus(EListItem item) {
+
+      if (item.status == _eListItemStatus.STATUS_DONE) {
+        item.status = _eListItemStatus.STATUS_PENDING;
+        showMessageInScaffold(_scaffoldKey, "Item pending.");
       } else {
-        item.status = EListItem.STATUS_DONE;
-        _checkColors[index] = Colors.green;
-        showMessageInScaffold(context, "Item done");
+        item.status = _eListItemStatus.STATUS_DONE;
+        showMessageInScaffold(_scaffoldKey, "Item done");
       }
 
-      /// add to a bloc sink
+      /// add changed elistItem to a bloc sink
       eListBloc.eListItemSink.add(item.setOperation(item.OPERATION_SAVE));
     }
 
@@ -114,17 +114,22 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
             itemCount: snapshot.data.length,
             separatorBuilder: (context, index) => Divider(),
             itemBuilder: (context, index) {
-              _checkColors.add(_checkColor);
+
+             /// The ListItem color status
+             EListItem _item = snapshot.data[index];
+             Color _checkColor = _item.status == _eListItemStatus.STATUS_DONE
+                      ? Colors.green
+                      : Colors.red;                                     
 
               /// Delete swipe button
               ///
               return Dismissible(
-                key: Key('${snapshot.data[index].id}'),
+                key: Key('${_item.id}'),
                 onDismissed: (direction) {
-                  eListBloc.eListItemSink.add(snapshot.data[index]
-                      .setOperation(snapshot.data[index].OPERATION_DELETE));
+                  eListBloc.eListItemSink.add(_item
+                      .setOperation(_item.OPERATION_DELETE));
                   showMessageInScaffold(
-                      context, "{${snapshot.data[index].name}");
+                      _scaffoldKey, "{${_item.name}");
                 },
                 background: Container(
                   color: Colors.red,
@@ -139,23 +144,23 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
                 child: ListTile(
                   leading: IconButton(
                       icon: Icon(Icons.check_circle_outline),
-                      color: _checkColors[index],
+                      color: _checkColor,
                       onPressed: () {
-                        _toggleItem(
-                            _checkColors[index], index, snapshot.data[index]);
+                        _toggleStatus(_item);
                       }),
-                  title: Text('${snapshot.data[index].name}'),
+                  title: Text('${_item.name}'),
                   trailing: (this.imagePath != null && index == 0)
                       ? IconButton(
                           icon: Image.file(File(imagePath)),
                           onPressed: () {
                             showMessageInScaffold(
-                                context, "TODO: image editing");
+                                _scaffoldKey, "TODO: image editing");
                           },
                         )
                       : IconButton(icon: Icon(Icons.photo), onPressed: () {}),
-                  onTap: () =>
-                      _editListItemScreen(context, snapshot.data[index]),
+                  onTap: () {                    
+                    _editListItemScreen(context, _item);
+                  },
                 ),
               );
             },

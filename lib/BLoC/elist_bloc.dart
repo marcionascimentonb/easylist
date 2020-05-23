@@ -64,7 +64,8 @@ class EListBloc extends BlocBase {
       eListItem.save();
     else if (eListItem.operation == eListItem.OPERATION_DELETE)
       eListItem.delete();
-    //move saved list into the allElists sink
+    /// move saved list into the allElists sink
+    /// or just refresh the stream if operation is null
     _getAllEListItems(eListItem);
   }  
 

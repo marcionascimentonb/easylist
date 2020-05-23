@@ -15,7 +15,7 @@ import 'elistitem.dart';
 /// A helper for database persistence
 class DatabaseHelper {
   static final _databaseName = 'dbEasyList.db';
-  static final _databaseVersion = 1;
+  static final _databaseVersion = 3;
 
   /// Makes this a singleton class
   DatabaseHelper._privateConstructor();
@@ -46,7 +46,8 @@ class DatabaseHelper {
 
   /// Creates database [tables] using a sql code
   Future _onCreate(Database db, int version) async {
-    await db.execute(EList.elistDDL + EListItem.elistItemDDL);
+    await db.execute(EList.elistDDL);
+    await db.execute(EListItem.elistItemDDL);
   }
 
   /// DML methods

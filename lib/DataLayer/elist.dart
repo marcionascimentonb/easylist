@@ -49,6 +49,10 @@ class EList extends DBPersistence {
     return table;
   }
 
+  String _getListItemsTableName(){
+    return EListItem().getTableName();
+  }
+
   @override
   String getTableId() {
     return colId;
@@ -74,7 +78,9 @@ class EList extends DBPersistence {
 
   /// Deletes an EList
   Future<int> delete() async {    
+    
     return await DatabaseHelper.instance.delete(this);
+
   }
 
   /// Get ELists by approximate name
@@ -91,8 +97,8 @@ class EList extends DBPersistence {
   /// getter for List of Items
   /// 
   Future<List<EListItem>> getAllEListItems() async {
-    final criteria = "${EListItem.colEListId} = '%${this.id}%'";
-    final results = await DatabaseHelper.instance.queryRows(table, criteria);
+    final criteria = "${EListItem.colEListId} = ${this.id}";
+    final results = await DatabaseHelper.instance.queryRows(_getListItemsTableName(), criteria);
     return results.length == 0
         ? List<EListItem>()
         : results
