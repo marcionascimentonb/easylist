@@ -4,15 +4,25 @@
 
 /// Persistence definition for database use. 
 /// 
-/// The idea here is to use this class as an interface and
-/// to have others interfaces of different kinds of persistence
-class IDBPersistence{
+abstract class DBPersistence{
+
+  /// TODO: change to enum
+  final int OPERATION_SAVE = 1;
+  final int OPERATION_DELETE = 2;
+  int operation; 
+
+
+
+  DBPersistence setOperation(int operation) {
+    this.operation =  operation;
+    return this;
+  }
 
   /// database table name
-  String getTableName(){}
+  String getTableName();
 
-  String getTableId(){}
+  String getTableId();
 
   /// Map used in CRUD operations
-  Map<String, dynamic> toMap(){}
+  Map<String, dynamic> toMap();
 }

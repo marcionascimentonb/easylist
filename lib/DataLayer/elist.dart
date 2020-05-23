@@ -3,14 +3,15 @@
 /// Date: 05/17/2020
 
 import 'package:easylist/DataLayer/dbpersitence.dart';
+import 'package:easylist/DataLayer/elistitem.dart';
 import 'databasehelper.dart';
 
 /// EasyList definition
 ///
-class EList implements IDBPersistence {
-  final int id;
-  final String name;
-  final String description;
+class EList extends DBPersistence {
+  int id;
+  String name;
+  String description;  
 
   /// Table DDL
   static final table = "EList";
@@ -34,7 +35,7 @@ class EList implements IDBPersistence {
         name = map[colName],
         description = map[colDescription];
 
-  /// Maps to database
+  @override
   Map<String, dynamic> toMap() {
     return {
       colId: id,
@@ -43,10 +44,12 @@ class EList implements IDBPersistence {
     };
   }
 
+  @override
   String getTableName() {
     return table;
   }
 
+  @override
   String getTableId() {
     return colId;
   }
@@ -61,7 +64,7 @@ class EList implements IDBPersistence {
             .map<EList>((rowMap) => EList.fromMap(rowMap))
             .toList(growable: false);
   }
-
+  
   /// Save an EList
   Future<int> save() async {
     return this.id == null
@@ -70,7 +73,7 @@ class EList implements IDBPersistence {
   }
 
   /// Deletes an EList
-  Future<int> delete() async {
+  Future<int> delete() async {    
     return await DatabaseHelper.instance.delete(this);
   }
 
@@ -84,4 +87,17 @@ class EList implements IDBPersistence {
             .map<EList>((rowMap) => EList.fromMap(rowMap))
             .toList(growable: false);
   }
+
+  /// getter for List of Items
+  /// 
+  Future<List<EListItem>> getAllEListItems() async {
+    final criteria = "${EListItem.colEListId} = '%${this.id}%'";
+    final results = await DatabaseHelper.instance.queryRows(table, criteria);
+    return results.length == 0
+        ? List<EListItem>()
+        : results
+            .map<EListItem>((rowMap) => EListItem.fromMap(rowMap))
+            .toList(growable: false);
+  }
+
 }

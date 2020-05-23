@@ -1,17 +1,25 @@
 /// Author: Marcio deFreitasNascimento
-/// Title: Easylist 
+/// Title: Easylist
 /// Date: 05/17/2020
 
 import 'package:easylist/DataLayer/dbpersitence.dart';
 import 'databasehelper.dart';
+import 'elist.dart';
 
-class EListItem implements IDBPersistence {
+class EListItem extends DBPersistence {
   int id;
-  int eListId;
+  //int eListId;
   String name;
   String description;
   String imagePath;
   int status;
+
+  EList eList;
+
+  ///[TODO]: change to Enum
+  static const STATUS_PENDING = 1;
+  static const STATUS_DONE = 2;
+  
 
   /// Table DDL
   static final table = "EListItem";
@@ -36,28 +44,28 @@ class EListItem implements IDBPersistence {
 
   EListItem(
       {this.id,
-      this.eListId,
+      this.eList,
       this.name,
       this.description,
       this.imagePath,
-      this.status});
+      this.status=STATUS_PENDING});
 
   /// Set arguments for a constructor's calling
-  /// 
+  ///
   /// It helps to generate objects from the database row maps
   EListItem.fromMap(Map<String, dynamic> map)
       : id = map[colId],
-        eListId = map[colId],
+        eList = EList(id:map[colId]),
         name = map[colName],
         description = map[colDescription],
         imagePath = map[colImagePath],
         status = map[colStatus];
 
-  /// Maps to database
+  @override
   Map<String, dynamic> toMap() {
     return {
       colId: id,
-      colEListId: eListId,
+      colEListId: eList.id,
       colName: name,
       colDescription: description,
       colImagePath: imagePath,
@@ -65,39 +73,26 @@ class EListItem implements IDBPersistence {
     };
   }
 
+  @override
   String getTableName() {
     return table;
   }
 
+  @override
   String getTableId() {
     return colId;
   }
 
-  /// Returns all ELists objects
-  Future<List<EListItem>> getAllEListItems() async {
-    final results = await DatabaseHelper.instance.queryAllRows(this);
-    return results.map((rowMap) => EListItem.fromMap(rowMap));
+  /// Save an EList
+  Future<int> save() async {
+    return this.id == null
+        ? await DatabaseHelper.instance.insert(this)
+        : await DatabaseHelper.instance.update(this);
   }
 
-  /// Inserts an EList
-  Future<int> insert() async {
-    return await DatabaseHelper.instance.insert(this);
-  }
-
-  /// Updates an EList
-  Future<int> update() async {
-    return await DatabaseHelper.instance.update(this);
-  }
-
-  /// Deletes an EList
+  /// Deletes an EListItem
   Future<int> delete() async {
     return await DatabaseHelper.instance.delete(this);
   }
 
-  /// Get ELists by approximate name
-  Future<List<EListItem>> getEListItemsByName(String name) async {
-    final criteria = "$colName LIKE '%$name%'";
-    final results = await DatabaseHelper.instance.queryRows(table, criteria);
-    return results.map((rowMap) => EListItem.fromMap(rowMap));
-  }
 }

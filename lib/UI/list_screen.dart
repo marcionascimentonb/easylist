@@ -6,6 +6,7 @@ import 'package:easylist/UI/easylistapp_provider.dart';
 /// Date: 05/17/2020
 
 import 'package:easylist/UI/list_detail_screen.dart';
+import 'package:easylist/UI/ui_utils.dart';
 import 'package:flutter/material.dart';
 
 /// ListScreen Class
@@ -29,7 +30,7 @@ class ListScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
           onPressed: () {
-            _addListScreen(context);
+            _editListScreen(context, EList());
           }),
     );
   }
@@ -42,31 +43,60 @@ class ListScreen extends StatelessWidget {
         initialData: List<EList>(),
         builder: (context, snapshot) {
           return ListView.separated(
-            /// [TODO]: load dynamically
-            /// https://flutter.dev/docs/cookbook/lists/basic-list
             itemCount: snapshot.data.length,
             separatorBuilder: (context, index) => Divider(),
             itemBuilder: (context, index) {
-              return ListTile(
-                leading: Icon(Icons.list),
-                title: Text('${snapshot.data[index].name}'),
-                onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                    builder: (_) => ListDetailScreen(
-                        title: '${snapshot.data[index].name}'))),
+              
+              /// Delete swipe button
+              /// 
+              return Dismissible(
+                key: Key('${snapshot.data[index].id}'),
+                onDismissed: (direction) {
+                  eListBloc.eListSink.add(snapshot.data[index]
+                      .setOperation(snapshot.data[index].OPERATION_DELETE));
+                  showMessageInScaffold(
+                      context, "{${snapshot.data[index].name}");
+                },
+                background: Container(
+                  color: Colors.red,
+                  child: Text('Delete',
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold)),
+                  alignment: Alignment.centerRight,
+                  padding: EdgeInsets.only(right: 10.0),
+                ),
+
+                /// EList Widget
+                /// 
+                child: ListTile(
+                  leading: IconButton(
+                    icon: Icon(
+                      Icons.edit,
+                    ),
+                    onPressed: () =>
+                        _editListScreen(context, snapshot.data[index]),
+                  ),
+                  title: Text('${snapshot.data[index].name}'),
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                      builder: (_) => ListDetailScreen(
+                          title: '${snapshot.data[index].name}',
+                          eListParent: snapshot.data[index]))),
+                ),
               );
             },
           );
         });
   }
 
-  /// Provides a dialog for adding of a new list
+  /// Provides a dialog for edit of a list
   ///
-  Future<void> _addListScreen(BuildContext context) async {
-    await showDialog(      
+  Future<void> _editListScreen(BuildContext context, EList eList) async {
+    await showDialog(
         context: context,
-        builder: (BuildContext context) {          
+        builder: (BuildContext context) {
           final eListBloc = EasyListAppProvider.of(context).eListBloc;
           TextEditingController nameController = TextEditingController();
+          nameController.text = eList.id == null ? "" : eList.name;
           return SimpleDialog(
             contentPadding: EdgeInsets.all(0.0),
             children: <Widget>[
@@ -84,15 +114,23 @@ class ListScreen extends StatelessWidget {
                     IconButton(
                       icon: Icon(Icons.arrow_forward),
                       tooltip: 'List Items',
-                      onPressed: () => eListBloc.eListSave.add(EList(name:nameController.text))
-                      // Navigator.of(context).push(
-                      //   MaterialPageRoute(
-                      //     builder: (_) {
-                            
-                      //       ///[TODO]:ListDetailScreen(title: "List Name");
-                      //       },
-                      //   ),
-                      // ),
+                      onPressed: () {
+                        eList.name = nameController.text;
+
+                        /// add to a bloc sink
+                        eListBloc.eListSink
+                            .add(eList.setOperation(eList.OPERATION_SAVE));
+
+                        /// TODO:Items
+                        // Navigator.of(context).push(
+                        //   MaterialPageRoute(
+                        //     builder: (_) {
+
+                        //       ListDetailScreen(title: "List Name");
+                        //       },
+                        //   ),
+                        // ),
+                      },
                     ),
                   ],
                 ),

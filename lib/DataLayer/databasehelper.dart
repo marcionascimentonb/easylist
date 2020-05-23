@@ -55,13 +55,13 @@ class DatabaseHelper {
   /// Inserts Elist
   ///
   /// Returns [id] of the inserted object into a table
-  Future<int> insert(IDBPersistence dbPersistence) async {
+  Future<int> insert(DBPersistence dbPersistence) async {
     Database db = await DatabaseHelper.instance.database;
     return await db.insert(dbPersistence.getTableName(), dbPersistence.toMap());
   }
 
   /// Returns All rows of a table 
-  Future<List<Map<String, dynamic>>> queryAllRows(IDBPersistence dbPersistence) async {
+  Future<List<Map<String, dynamic>>> queryAllRows(DBPersistence dbPersistence) async {
     Database db = await DatabaseHelper.instance.database;
     return await db.query(dbPersistence.getTableName());
   }
@@ -76,7 +76,7 @@ class DatabaseHelper {
 
   /// We are assuming that the id column in the map is set.
   /// The other column values will be used to update.
-  Future<int> update(IDBPersistence dbPersistence) async {
+  Future<int> update(DBPersistence dbPersistence) async {
     Database db = await instance.database;
     int idToUpdate = dbPersistence.toMap()[dbPersistence.getTableId()];
     return await db.update(dbPersistence.getTableName(), dbPersistence.toMap(),
@@ -84,7 +84,7 @@ class DatabaseHelper {
   }
 
   ///Deletes row base on id, returns the affected row [id]
-  Future<int> delete(IDBPersistence dbPersistence) async {
+  Future<int> delete(DBPersistence dbPersistence) async {
     Database db = await instance.database;
     int idToDelete = dbPersistence.toMap()[dbPersistence.getTableId()];
     return await db.delete(dbPersistence.getTableName(), where: '${dbPersistence.getTableId()} = ?', whereArgs: [idToDelete]);
