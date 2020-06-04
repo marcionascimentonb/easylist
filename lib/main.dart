@@ -7,26 +7,30 @@ import 'package:flutter/material.dart';
 import 'BLoC/elist_bloc.dart';
 import 'UI/easylistapp_provider.dart';
 import 'UI/home_screen.dart';
+import 'UI/ui_utils.dart';
 
 /// Runs the app async to load the camera in another thread 
 Future<void> main() async {
+  final appPath = await tempPath();
   final firstCamera = await _getFirstCamera();
 
-  runApp(EasyListApp(camera: firstCamera));
+  runApp(EasyListApp(camera: firstCamera, appPath:appPath));
 }
 
 
 /// EasyLisApp application class
 class EasyListApp extends StatelessWidget {
   final camera;
+  final appPath;
 
-  EasyListApp({this.camera});
+  EasyListApp({this.camera,this.appPath});
 
   @override
   Widget build(BuildContext context) {
     return EasyListAppProvider(
       eListBloc: EListBloc(),
       camera: camera,
+      appPath: appPath,
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'EasyList',        

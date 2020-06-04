@@ -1,15 +1,13 @@
-import 'package:camera/camera.dart';
-import 'package:easylist/DataLayer/elist.dart';
-import 'package:easylist/DataLayer/elistitem.dart';
-
 /// Author: Marcio deFreitasNascimento
 /// Title: Easylist - App Mock Up
 /// Date: 05/17/2020
-
+import 'dart:async';
+import 'package:camera/camera.dart';
+import 'package:easylist/DataLayer/elist.dart';
+import 'package:easylist/DataLayer/elistitem.dart';
 import 'package:easylist/UI/picture_screen.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
-
 import 'easylistapp_provider.dart';
 import 'list_screen.dart';
 import 'ui_utils.dart';
@@ -18,31 +16,31 @@ import 'ui_utils.dart';
 ///
 /// UI displays the items of a specific ListScreen
 class ListDetailScreen extends StatefulWidget {
-  final String imagePath;
   final EList eListParent;
+  final EListItem currentItem;
 
-  ListDetailScreen({Key key, this.title, this.imagePath, this.eListParent})
+  ListDetailScreen({Key key, @required this.eListParent, this.currentItem})
       : super(key: key);
 
-  final String title;
-
   @override
-  _ListDetailScreenState createState() => _ListDetailScreenState(
-      title: title, imagePath: imagePath, eListParent: eListParent);
+  _ListDetailScreenState createState() => _ListDetailScreenState();
 }
 
 class _ListDetailScreenState extends State<ListDetailScreen> {
-  _ListDetailScreenState({this.title, this.imagePath, this.eListParent}) {
-    this.title = this.title == null ? "List Name" : this.title;
-  }
-
-  String title;
-  String imagePath;
-  EList eListParent;
-
   /// A unique key
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  final  ElistItemStatus _eListItemStatus = ElistItemStatus();
+  final ElistItemStatus _eListItemStatus = ElistItemStatus();
+
+  @override
+  void initState() {
+    super.initState();
+
+    /// in case to create a new item through taking picture first
+    if (widget.currentItem != null && widget.currentItem.id == null) {
+      /// The timer here is to excute async _editListItemScreen
+      Timer.run(() => _editListItemScreen(context, widget.currentItem));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +56,10 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
           onPressed: () => Navigator.of(context)
               .push(MaterialPageRoute(builder: (_) => ListScreen())),
         ),
-        title: Text(title),
+
+        /// check the name of listparent for null
+        /// we could use: Text(widget.eListParent.name ?? "default list name")
+        title: Text(widget.eListParent.name),
       ),
       body: _allItems(context),
       floatingActionButton: Row(
@@ -69,14 +70,22 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
               heroTag: "option1",
               child: Icon(Icons.add),
               onPressed: () {
-                _editListItemScreen(context, EListItem(eList: eListParent));
+                _editListItemScreen(
+                    context, EListItem(eList: widget.eListParent));
               }),
           Spacer(flex: 1),
           FloatingActionButton(
             heroTag: "option2",
             child: Icon(Icons.add_a_photo),
-            onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-                builder: (_) => TakePictureScreen(camera: camera))),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                /// Take a picture and add to a new ListItem
+                ///
+                builder: (_) => TakePictureScreen(
+                    camera: camera,
+                    dataObject: EListItem(eList: widget.eListParent)),
+              ),
+            ),
           ),
         ],
       ),
@@ -87,13 +96,13 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
   ///
   Widget _allItems(BuildContext context) {
     final eListBloc = EasyListAppProvider.of(context).eListBloc;
+    final camera = EasyListAppProvider.of(context).camera;
 
     /// force stream refresh
-    eListBloc.eListItemSink.add(EListItem(eList: eListParent));    
+    eListBloc.eListItemSink.add(EListItem(eList: widget.eListParent));
 
     /// Toggles an item according to item status
     void _toggleStatus(EListItem item) {
-
       if (item.status == _eListItemStatus.STATUS_DONE) {
         item.status = _eListItemStatus.STATUS_PENDING;
         showMessageInScaffold(_scaffoldKey, "Item pending.");
@@ -114,22 +123,22 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
             itemCount: snapshot.data.length,
             separatorBuilder: (context, index) => Divider(),
             itemBuilder: (context, index) {
-
-             /// The ListItem color status
-             EListItem _item = snapshot.data[index];
-             Color _checkColor = _item.status == _eListItemStatus.STATUS_DONE
-                      ? Colors.green
-                      : Colors.red;                                     
+              /// Iniatializing eListItem values
+              /// TODO: Change to a funtion
+              /// The ListItem color status
+              EListItem _item = snapshot.data[index];
+              Color _checkColor = _item.status == _eListItemStatus.STATUS_DONE
+                  ? Colors.green
+                  : Colors.red;
 
               /// Delete swipe button
               ///
               return Dismissible(
                 key: Key('${_item.id}'),
                 onDismissed: (direction) {
-                  eListBloc.eListItemSink.add(_item
-                      .setOperation(_item.OPERATION_DELETE));
-                  showMessageInScaffold(
-                      _scaffoldKey, "{${_item.name}");
+                  eListBloc.eListItemSink
+                      .add(_item.setOperation(_item.OPERATION_DELETE));
+                  showMessageInScaffold(_scaffoldKey, "${_item.name} deleted.");
                 },
                 background: Container(
                   color: Colors.red,
@@ -149,16 +158,28 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
                         _toggleStatus(_item);
                       }),
                   title: Text('${_item.name}'),
-                  trailing: (this.imagePath != null && index == 0)
-                      ? IconButton(
-                          icon: Image.file(File(imagePath)),
-                          onPressed: () {
-                            showMessageInScaffold(
-                                _scaffoldKey, "TODO: image editing");
-                          },
-                        )
-                      : IconButton(icon: Icon(Icons.photo), onPressed: () {}),
-                  onTap: () {                    
+                  trailing: IconButton(
+                    icon: _item.imagePath != null
+                        ? Image.file(File(_item.imagePath))
+                        : Icon(Icons.photo),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) { 
+                            /// loading a full listParent
+                            /// cause an item just load its idListParent
+                            /// from scratch - lazy approach
+                            _item.eList = widget.eListParent;
+                            return _item.imagePath != null
+                              ? DisplayPictureScreen(dataObject: _item)
+                              : TakePictureScreen(
+                                  camera: camera, dataObject: _item);},
+                        ),
+                      );
+                    },
+                  ),
+                  onTap: () {
                     _editListItemScreen(context, _item);
                   },
                 ),

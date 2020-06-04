@@ -1,12 +1,14 @@
 /// Author: https://flutter.dev/docs/cookbook/plugins/picture-using-camera#complete-example
 /// Modifications by: Marcio de Freitas Nascimento
-/// Title: Easylist - App Mock Up
-/// Date: 05/17/2020
+/// Title: Easylist
 
 import 'dart:async';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
+import 'package:easylist/DataLayer/dbpersitence.dart';
+import 'package:easylist/DataLayer/elistitem.dart';
+import 'package:easylist/UI/easylistapp_provider.dart';
 import 'package:easylist/UI/list_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' show join;
@@ -16,10 +18,12 @@ import 'package:path_provider/path_provider.dart';
 class TakePictureScreen extends StatefulWidget {
   final CameraDescription camera;
 
-  const TakePictureScreen({
-    Key key,
-    @required this.camera,
-  }) : super(key: key);
+  /// Object from dataLayer which will persist the picture
+  final DBPersistence dataObject;
+
+  const TakePictureScreen(
+      {Key key, @required this.camera, @required this.dataObject})
+      : super(key: key);
 
   @override
   TakePictureScreenState createState() => TakePictureScreenState();
@@ -97,14 +101,17 @@ class TakePictureScreenState extends State<TakePictureScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => DisplayPictureScreen(imagePath: path),
+                builder: (context) {
+                  (widget.dataObject as EListItem).imagePath = path;
+                  dispose();
+                  return DisplayPictureScreen(dataObject: widget.dataObject);
+                },
               ),
             );
           } catch (e) {
             // If an error occurs, log the error to the console.
             print(e);
           }
-
         },
       ),
     );
@@ -113,27 +120,44 @@ class TakePictureScreenState extends State<TakePictureScreen> {
 
 // A widget that displays the picture taken by the user.
 class DisplayPictureScreen extends StatelessWidget {
-  final String imagePath;
+  final DBPersistence dataObject;
 
-  const DisplayPictureScreen({Key key, this.imagePath}) : super(key: key);
+  const DisplayPictureScreen({Key key, this.dataObject}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final eListBloc = EasyListAppProvider.of(context).eListBloc;
+
     return Scaffold(
-      appBar: AppBar(title: Text('Picture of the Item')),
+      appBar: AppBar(
+        title:
+            /// ?? test with the name is null first 
+            /// and if true give a default text instead
+            Text((dataObject as EListItem).name ?? 'Picture of the New Item'),
+      ),
       // The image is stored as a file on the device. Use the `Image.file`
       // constructor with the given path to display the image.
-      body: Image.file(File(imagePath)),
+      body: Image.file(File((dataObject as EListItem).imagePath)),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.save_alt, ),
-        tooltip: 'Save Item Picture',
-        onPressed: () => Navigator.of(context).push(
-          MaterialPageRoute(
-            /// Going back to the List Items
-            /// [TODO]: need to perform dynamically
-            builder: (_) => ListDetailScreen(imagePath: imagePath),
-          ),
+        child: Icon(
+          Icons.save_alt,
         ),
+        tooltip: 'Save Item Picture',
+        onPressed: () {
+          if ((dataObject as EListItem).id != null)
+            // add changed elistItem to a bloc sink
+            eListBloc.eListItemSink
+                .add(dataObject.setOperation(dataObject.OPERATION_SAVE));
+
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              /// Going back to the List Items
+              builder: (_) => ListDetailScreen(
+                  eListParent: (dataObject as EListItem).eList,
+                  currentItem: (dataObject as EListItem)),
+            ),
+          );
+        },
       ),
     );
   }

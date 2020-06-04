@@ -15,10 +15,10 @@ import 'package:flutter/material.dart';
 class ListScreen extends StatelessWidget {
   const ListScreen({Key key}) : super(key: key);
 
-
   @override
   Widget build(BuildContext context) {
-    final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+    final GlobalKey<ScaffoldState> _scaffoldKey =
+        new GlobalKey<ScaffoldState>();
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -29,7 +29,7 @@ class ListScreen extends StatelessWidget {
         ),
         title: Text("EasyList - All lists"),
       ),
-      body: _allLists(context,_scaffoldKey),
+      body: _allLists(context, _scaffoldKey),
       floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
           onPressed: () {
@@ -49,16 +49,15 @@ class ListScreen extends StatelessWidget {
             itemCount: snapshot.data.length,
             separatorBuilder: (context, index) => Divider(),
             itemBuilder: (context, index) {
-              
               /// Delete swipe button
-              /// 
+              ///
               return Dismissible(
                 key: Key('${snapshot.data[index].id}'),
                 onDismissed: (direction) {
                   eListBloc.eListSink.add(snapshot.data[index]
                       .setOperation(snapshot.data[index].OPERATION_DELETE));
                   showMessageInScaffold(
-                     scaffoldkey, "{${snapshot.data[index].name}");
+                      scaffoldkey, "${snapshot.data[index].name} deleted.");
                 },
                 background: Container(
                   color: Colors.red,
@@ -70,7 +69,7 @@ class ListScreen extends StatelessWidget {
                 ),
 
                 /// EList Widget
-                /// 
+                ///
                 child: ListTile(
                   leading: IconButton(
                     icon: Icon(
@@ -81,9 +80,8 @@ class ListScreen extends StatelessWidget {
                   ),
                   title: Text('${snapshot.data[index].name}'),
                   onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                      builder: (_) => ListDetailScreen(
-                          title: '${snapshot.data[index].name}',
-                          eListParent: snapshot.data[index]))),
+                      builder: (_) =>
+                          ListDetailScreen(eListParent: snapshot.data[index]))),
                 ),
               );
             },

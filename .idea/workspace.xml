@@ -10,6 +10,7 @@
       <change beforePath="$PROJECT_DIR$/android/easylist_android.iml" beforeDir="false" afterPath="$PROJECT_DIR$/android/easylist_android.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/UI/list_detail_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/UI/list_detail_screen.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/UI/list_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/UI/list_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/UI/picture_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/UI/picture_screen.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/main.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
     </list>
@@ -67,7 +68,9 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>

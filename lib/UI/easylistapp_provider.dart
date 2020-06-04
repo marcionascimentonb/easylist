@@ -7,8 +7,9 @@ import 'package:flutter/widgets.dart';
 class EasyListAppProvider extends InheritedWidget {
   final camera;
   final eListBloc;
+  final appPath;
 
-  EasyListAppProvider({this.camera,this.eListBloc, Key key, this.child})
+  EasyListAppProvider({this.camera,this.eListBloc,this.appPath, Key key, this.child})
       : super(key: key, child: child);
 
   final Widget child;
