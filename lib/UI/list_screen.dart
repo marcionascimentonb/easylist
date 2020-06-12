@@ -112,25 +112,14 @@ class ListScreen extends StatelessWidget {
                       ),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
-                    IconButton(
-                      icon: Icon(Icons.arrow_forward),
-                      tooltip: 'List Items',
+                    FlatButton(
+                      child: Text("Save list"),                      
                       onPressed: () {
                         eList.name = nameController.text;
-
                         /// add to a bloc sink
                         eListBloc.eListSink
                             .add(eList.setOperation(eList.OPERATION_SAVE));
-
-                        /// TODO:Items
-                        // Navigator.of(context).push(
-                        //   MaterialPageRoute(
-                        //     builder: (_) {
-
-                        //       ListDetailScreen(title: "List Name");
-                        //       },
-                        //   ),
-                        // ),
+                        nameController.text = "";
                       },
                     ),
                   ],

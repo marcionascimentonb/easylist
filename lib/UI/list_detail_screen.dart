@@ -158,6 +158,7 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
                         _toggleStatus(_item);
                       }),
                   title: Text('${_item.name}'),
+                  subtitle: Text('Quantity: ${_item.quantity}'),
                   trailing: IconButton(
                     icon: _item.imagePath != null
                         ? Image.file(File(_item.imagePath))
@@ -198,7 +199,11 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
         builder: (BuildContext context) {
           final eListBloc = EasyListAppProvider.of(context).eListBloc;
           TextEditingController nameController = TextEditingController();
+          TextEditingController quantityController = TextEditingController();
+
           nameController.text = eListItem.id == null ? "" : eListItem.name;
+          quantityController.text = eListItem.id == null ? "" : eListItem.quantity;
+
           return SimpleDialog(
             contentPadding: EdgeInsets.all(0.0),
             children: <Widget>[
@@ -213,22 +218,22 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
                       ),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
-                    IconButton(
-                      color: Colors.grey,
-                      tooltip: 'Save Item',
-                      icon: Row(
+                    FlatButton(                      
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
-                          Icon(Icons.save),
+                          Text("Save item"),
                         ],
                       ),
                       onPressed: () {
                         eListItem.name = nameController.text;
-
+                        eListItem.quantity = quantityController.text;
                         /// add to a bloc sink
                         ///
                         eListBloc.eListItemSink.add(
                             eListItem.setOperation(eListItem.OPERATION_SAVE));
+                        nameController.text = "";
+                        quantityController.text="";
                       },
                     ),
                   ],
@@ -247,6 +252,15 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
                   ),
                 ),
               ),
+              SimpleDialogOption(
+                child: TextField(
+                  controller: quantityController,
+                  decoration: InputDecoration(
+                    border: UnderlineInputBorder(),
+                    labelText: 'Quantity',
+                  ),
+                ),
+              ),              
             ],
           );
         });

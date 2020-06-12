@@ -139,9 +139,7 @@ class DisplayPictureScreen extends StatelessWidget {
       // constructor with the given path to display the image.
       body: Image.file(File((dataObject as EListItem).imagePath)),
       floatingActionButton: FloatingActionButton(
-        child: Icon(
-          Icons.save_alt,
-        ),
+        child: Text("Save"),
         tooltip: 'Save Item Picture',
         onPressed: () {
           if ((dataObject as EListItem).id != null)

@@ -13,6 +13,7 @@ class EListItem extends DBPersistence {
   String description;
   String imagePath;
   int status;
+  String quantity;
 
   EList eList;
 
@@ -25,6 +26,7 @@ class EListItem extends DBPersistence {
   static final colDescription = "description";
   static final colImagePath = "imagePath";
   static final colStatus = "status";
+  static final colQuantity = "quantity";
 
   static final elistItemDDL = ''' 
     CREATE TABLE $table(
@@ -33,6 +35,7 @@ class EListItem extends DBPersistence {
       $colDescription Text,
       $colStatus Integer NOT NULL DEFAULT 1,
       $colImagePath Text,
+      $colQuantity Text,
       $colEListId Integer,
       CONSTRAINT "lnk_EList_EListItem" FOREIGN KEY ( $colEListId ) REFERENCES $elistTable( $colId )
       ON DELETE CASCADE
@@ -45,7 +48,8 @@ class EListItem extends DBPersistence {
       this.description,
       this.imagePath,
       ///TODO: change status value to Enum
-      this.status=1});
+      this.status=1,
+      this.quantity});
 
   /// Set arguments for a constructor's calling
   ///
@@ -56,7 +60,8 @@ class EListItem extends DBPersistence {
         name = map[colName],
         description = map[colDescription],
         imagePath = map[colImagePath],
-        status = map[colStatus];
+        status = map[colStatus],
+        quantity = map[colQuantity];
 
   @override
   Map<String, dynamic> toMap() {
@@ -67,6 +72,7 @@ class EListItem extends DBPersistence {
       colDescription: description,
       colImagePath: imagePath,
       colStatus: status,
+      colQuantity: quantity,
     };
   }
 
