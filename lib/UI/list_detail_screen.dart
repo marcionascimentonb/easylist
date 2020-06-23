@@ -31,6 +31,8 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final ElistItemStatus _eListItemStatus = ElistItemStatus();
 
+  FocusNode focusNode;
+
   @override
   void initState() {
     super.initState();
@@ -40,6 +42,8 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
       /// The timer here is to excute async _editListItemScreen
       Timer.run(() => _editListItemScreen(context, widget.currentItem));
     }
+
+    focusNode = FocusNode();
   }
 
   @override
@@ -122,6 +126,7 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
           return ListView.separated(
             itemCount: snapshot.data.length,
             separatorBuilder: (context, index) => Divider(),
+            padding: EdgeInsets.only(bottom:100.0),
             itemBuilder: (context, index) {
               /// Iniatializing eListItem values
               /// TODO: Change to a funtion
@@ -167,15 +172,16 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) { 
+                          builder: (_) {
                             /// loading a full listParent
                             /// cause an item just load its idListParent
                             /// from scratch - lazy approach
                             _item.eList = widget.eListParent;
                             return _item.imagePath != null
-                              ? DisplayPictureScreen(dataObject: _item)
-                              : TakePictureScreen(
-                                  camera: camera, dataObject: _item);},
+                                ? DisplayPictureScreen(dataObject: _item)
+                                : TakePictureScreen(
+                                    camera: camera, dataObject: _item);
+                          },
                         ),
                       );
                     },
@@ -202,67 +208,79 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
           TextEditingController quantityController = TextEditingController();
 
           nameController.text = eListItem.id == null ? "" : eListItem.name;
-          quantityController.text = eListItem.id == null ? "" : eListItem.quantity;
+          quantityController.text =
+              eListItem.id == null ? "" : eListItem.quantity;
 
-          return SimpleDialog(
-            contentPadding: EdgeInsets.all(0.0),
-            children: <Widget>[
-              SimpleDialogOption(
-                padding: EdgeInsets.all(0.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    IconButton(
-                      icon: Icon(
-                        Icons.close,
+          return SingleChildScrollView(
+            child: SimpleDialog(
+              children: <Widget>[
+                SimpleDialogOption(
+                  padding: EdgeInsets.all(0.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      IconButton(
+                        icon: Icon(
+                          Icons.close,
+                        ),
+                        onPressed: () => Navigator.of(context).pop(),
                       ),
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                    FlatButton(                      
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: <Widget>[
-                          Text("Save item"),
-                        ],
+                      FlatButton(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            Text("Save item"),
+                          ],
+                        ),
+                        onPressed: () {
+                          eListItem.name = nameController.text;
+                          eListItem.quantity = quantityController.text;
+
+                          /// add to a bloc sink
+                          ///
+                          eListBloc.eListItemSink.add(
+                              eListItem.setOperation(eListItem.OPERATION_SAVE));
+                          nameController.text = "";
+                          quantityController.text = "";
+                          focusNode.requestFocus();
+                        },
                       ),
-                      onPressed: () {
-                        eListItem.name = nameController.text;
-                        eListItem.quantity = quantityController.text;
-                        /// add to a bloc sink
-                        ///
-                        eListBloc.eListItemSink.add(
-                            eListItem.setOperation(eListItem.OPERATION_SAVE));
-                        nameController.text = "";
-                        quantityController.text="";
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              SimpleDialogOption(
-                child: Divider(),
-                padding: EdgeInsets.all(0.0),
-              ),
-              SimpleDialogOption(
-                child: TextField(
-                  controller: nameController,
-                  decoration: InputDecoration(
-                    border: UnderlineInputBorder(),
-                    labelText: 'Item Name',
+                    ],
                   ),
                 ),
-              ),
-              SimpleDialogOption(
-                child: TextField(
-                  controller: quantityController,
-                  decoration: InputDecoration(
-                    border: UnderlineInputBorder(),
-                    labelText: 'Quantity',
+                SimpleDialogOption(
+                  child: Divider(),
+                  padding: EdgeInsets.all(0.0),
+                ),
+                SimpleDialogOption(
+                  child: TextField(
+                    focusNode: focusNode,
+                    controller: nameController,
+                    decoration: InputDecoration(
+                      border: UnderlineInputBorder(),
+                      labelText: 'Item Name',
+                    ),
                   ),
                 ),
-              ),              
-            ],
+                SimpleDialogOption(
+                  child: TextField(
+                    controller: quantityController,
+                    decoration: InputDecoration(
+                      border: UnderlineInputBorder(),
+                      labelText: 'Quantity',
+                    ),
+                  ),
+                ),
+              ],
+            ),
           );
         });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    focusNode.dispose();
   }
 }

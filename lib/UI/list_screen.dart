@@ -29,8 +29,9 @@ class ListScreen extends StatelessWidget {
         ),
         title: Text("EasyList - All lists"),
       ),
-      body: _allLists(context, _scaffoldKey),
+      body: _allLists(context, _scaffoldKey),      
       floatingActionButton: FloatingActionButton(
+          tooltip: "Add new list",
           child: Icon(Icons.add),
           onPressed: () {
             _editListScreen(context, EList());
@@ -41,13 +42,14 @@ class ListScreen extends StatelessWidget {
   /// Returns all avaiable lists
   Widget _allLists(BuildContext context, GlobalKey<ScaffoldState> scaffoldkey) {
     final eListBloc = EasyListAppProvider.of(context).eListBloc;
-    return StreamBuilder<List<EList>>(
+    return StreamBuilder<List<EList>>(      
         stream: eListBloc.allELists,
         initialData: List<EList>(),
         builder: (context, snapshot) {
-          return ListView.separated(
+          return ListView.separated(            
             itemCount: snapshot.data.length,
             separatorBuilder: (context, index) => Divider(),
+            padding: EdgeInsets.only(bottom:100.0),
             itemBuilder: (context, index) {
               /// Delete swipe button
               ///
@@ -79,6 +81,12 @@ class ListScreen extends StatelessWidget {
                         _editListScreen(context, snapshot.data[index]),
                   ),
                   title: Text('${snapshot.data[index].name}'),
+                  subtitle: Row(
+                    children: <Widget>[
+                      Icon(Icons.list),
+                      Text("Items...")
+                    ],
+                  ),
                   onTap: () => Navigator.of(context).push(MaterialPageRoute(
                       builder: (_) =>
                           ListDetailScreen(eListParent: snapshot.data[index]))),
@@ -113,9 +121,10 @@ class ListScreen extends StatelessWidget {
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                     FlatButton(
-                      child: Text("Save list"),                      
+                      child: Text("Save list"),
                       onPressed: () {
                         eList.name = nameController.text;
+
                         /// add to a bloc sink
                         eListBloc.eListSink
                             .add(eList.setOperation(eList.OPERATION_SAVE));
