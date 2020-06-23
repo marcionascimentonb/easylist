@@ -49,6 +49,7 @@ class ListScreen extends StatelessWidget {
           return ListView.separated(            
             itemCount: snapshot.data.length,
             separatorBuilder: (context, index) => Divider(),
+            padding: EdgeInsets.only(bottom:100.0),
             itemBuilder: (context, index) {
               /// Delete swipe button
               ///
