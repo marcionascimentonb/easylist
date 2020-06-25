@@ -126,7 +126,7 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
           return ListView.separated(
             itemCount: snapshot.data.length,
             separatorBuilder: (context, index) => Divider(),
-            padding: EdgeInsets.only(bottom:100.0),
+            padding: EdgeInsets.only(bottom: 100.0),
             itemBuilder: (context, index) {
               /// Iniatializing eListItem values
               /// TODO: Change to a funtion
@@ -164,27 +164,63 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
                       }),
                   title: Text('${_item.name}'),
                   subtitle: Text('Quantity: ${_item.quantity}'),
-                  trailing: IconButton(
-                    icon: _item.imagePath != null
-                        ? Image.file(File(_item.imagePath))
-                        : Icon(Icons.photo),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) {
-                            /// loading a full listParent
-                            /// cause an item just load its idListParent
-                            /// from scratch - lazy approach
-                            _item.eList = widget.eListParent;
-                            return _item.imagePath != null
-                                ? DisplayPictureScreen(dataObject: _item)
-                                : TakePictureScreen(
-                                    camera: camera, dataObject: _item);
-                          },
-                        ),
-                      );
-                    },
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      SizedBox(
+                          width: 50,
+                          child: Tooltip(
+                            message: "Picture",
+                            child: FlatButton(
+                              child: _item.imagePath != null
+                                  ? Image.file(
+                                      File(_item.imagePath),
+                                      height: 20,
+                                      width: 20,
+                                    )
+                                  : Icon(
+                                      Icons.photo,
+                                      size: 20,
+                                      color: Colors.grey,
+                                    ),
+                              shape: CircleBorder(),
+                              color: Colors.black12,
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) {
+                                      /// loading a full listParent
+                                      /// cause an item just load its idListParent
+                                      /// from scratch - lazy approach
+                                      _item.eList = widget.eListParent;
+                                      return _item.imagePath != null
+                                          ? DisplayPictureScreen(
+                                              dataObject: _item)
+                                          : TakePictureScreen(
+                                              camera: camera,
+                                              dataObject: _item);
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
+                          )),
+                      SizedBox(
+                          width: 50,
+                          child: FlatButton(
+                            onPressed: () {},
+                            child: Tooltip(
+                                message: "Deals",
+                                child: Icon(
+                                  Icons.arrow_forward,
+                                  color: Colors.white,
+                                  size: 20,
+                                )),
+                            shape: CircleBorder(),
+                            color: Colors.black12,
+                          ))
+                    ],
                   ),
                   onTap: () {
                     _editListItemScreen(context, _item);
