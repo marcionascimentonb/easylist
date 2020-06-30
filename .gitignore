@@ -21,3 +21,4 @@ doc/api/
 *.js.map
 android/key.properties
 .flutter-plugins-dependencies
+.flutter-plugins
