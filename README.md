@@ -1,4 +1,11 @@
-# EASYLIST – Simple Shopping List App
+[google_play_button]: https://play.google.com/intl/en_us/badges/images/badge_new.png
+[google_play]: https://play.google.com/store/apps/details?id=net.tzaz.easylist
+
+<img align="right" src="images/easylist-512-512.png" alt="">
+
+# EASYLIST 
+
+[![Get it on Google Play][google_play_button]][google_play]
 
 EasyList will be a mobile application that allows the user to make shopping lists:
 - Create shopping list
