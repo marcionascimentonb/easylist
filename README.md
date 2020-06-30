@@ -1,7 +1,7 @@
 [google_play_button]: https://play.google.com/intl/en_us/badges/images/badge_new.png
 [google_play]: https://play.google.com/store/apps/details?id=net.tzaz.easylist
 
-<img align="right" src="android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" alt="">
+<img align="right" src="images/easylist-192-192.png" alt="">
 
 # EASYLIST 
 
