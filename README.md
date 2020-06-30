@@ -1,5 +1,6 @@
 [google_play_button]: https://play.google.com/intl/en_us/badges/images/badge_new.png
 [google_play]: https://play.google.com/store/apps/details?id=net.tzaz.easylist
+[app_screenshots]: images/easylist-screenshot.png
 
 <img align="right" src="images/easylist-192-192.png" alt="">
 
