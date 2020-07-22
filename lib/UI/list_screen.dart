@@ -29,7 +29,7 @@ class ListScreen extends StatelessWidget {
         ),
         title: Text("EasyList - All lists"),
       ),
-      body: _allLists(context, _scaffoldKey),      
+      body: _allLists(context, _scaffoldKey),
       floatingActionButton: FloatingActionButton(
           tooltip: "Add new list",
           child: Icon(Icons.add),
@@ -42,14 +42,14 @@ class ListScreen extends StatelessWidget {
   /// Returns all avaiable lists
   Widget _allLists(BuildContext context, GlobalKey<ScaffoldState> scaffoldkey) {
     final eListBloc = EasyListAppProvider.of(context).eListBloc;
-    return StreamBuilder<List<EList>>(      
+    return StreamBuilder<List<EList>>(
         stream: eListBloc.allELists,
         initialData: List<EList>(),
         builder: (context, snapshot) {
-          return ListView.separated(            
+          return ListView.separated(
             itemCount: snapshot.data.length,
             separatorBuilder: (context, index) => Divider(),
-            padding: EdgeInsets.only(bottom:100.0),
+            padding: EdgeInsets.only(bottom: 100.0),
             itemBuilder: (context, index) {
               /// Delete swipe button
               ///
@@ -82,10 +82,7 @@ class ListScreen extends StatelessWidget {
                   ),
                   title: Text('${snapshot.data[index].name}'),
                   subtitle: Row(
-                    children: <Widget>[
-                      Icon(Icons.list),
-                      Text("Items...")
-                    ],
+                    children: <Widget>[Icon(Icons.list), Text("Items...")],
                   ),
                   onTap: () => Navigator.of(context).push(MaterialPageRoute(
                       builder: (_) =>

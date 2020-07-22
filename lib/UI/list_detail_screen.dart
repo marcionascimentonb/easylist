@@ -3,6 +3,7 @@
 /// Date: 05/17/2020
 import 'dart:async';
 import 'package:camera/camera.dart';
+import 'package:easylist/DataLayer/apiwalmart.dart';
 import 'package:easylist/DataLayer/elist.dart';
 import 'package:easylist/DataLayer/elistitem.dart';
 import 'package:easylist/UI/picture_screen.dart';
@@ -206,20 +207,22 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
                               },
                             ),
                           )),
-                      SizedBox(
-                          width: 50,
-                          child: FlatButton(
-                            onPressed: () {},
-                            child: Tooltip(
-                                message: "Deals",
-                                child: Icon(
-                                  Icons.arrow_forward,
-                                  color: Colors.white,
-                                  size: 20,
-                                )),
-                            shape: CircleBorder(),
-                            color: Colors.black12,
-                          ))
+                      // SizedBox(
+                      //     width: 50,
+                      //     child: FlatButton(
+                      //       onPressed: () async {
+                      //        await APIWalmart.instance.fetchDeals();
+                      //       },
+                      //       child: Tooltip(
+                      //           message: "Deals",
+                      //           child: Icon(
+                      //             Icons.arrow_forward,
+                      //             color: Colors.white,
+                      //             size: 20,
+                      //           )),
+                      //       shape: CircleBorder(),
+                      //       color: Colors.black12,
+                      //     ))
                     ],
                   ),
                   onTap: () {

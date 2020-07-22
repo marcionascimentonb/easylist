@@ -22,3 +22,4 @@ doc/api/
 android/key.properties
 .flutter-plugins-dependencies
 .flutter-plugins
+assets/WM_IO_private_key.pem
